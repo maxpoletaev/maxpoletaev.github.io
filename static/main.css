@@ -1,0 +1,143 @@
+:root {
+  --color-bg: #FFFFF7;
+  --color-text: #000000;
+  --color-text-muted: #666;
+  --color-title: #000080;
+  --color-title-border: #000;
+  --color-link: #0000EE;
+  --color-link-visited: #551A8B;
+  --color-link-hover: #FFFFE0;
+  --color-ascii-art: #444;
+  --color-header: #1A472A;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #2E3440;
+    --color-text: #ECEFF4;
+    --color-text-muted: #4C566A;
+    --color-title: #88C0D0;
+    --color-title-border: #88C0D0;
+    --color-link: #BF616A;
+    --color-link-visited: #B48EAD;
+    --color-link-hover: #3B4252;
+    --color-ascii-art: #D8DEE9;
+    --color-header: #81A1C1;
+  }
+}
+
+@font-face {
+  font-family: "freepixel";
+  src: url("freepixel.ttf") format("truetype");
+}
+
+body {
+  font-family: 'freepixel', 'Courier New', monospace;
+  font-size: 18px;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 10px;
+  line-height: 1.4;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.header__title {
+  color: var(--color-title);
+  border-bottom: 2px solid var(--color-title-border);
+  text-align: center;
+  padding-bottom: 10px;
+  font-size: 2.5em;
+  font-weight: bold;
+}
+
+.header__title.-secondary {
+  font-size: 1.8em;
+  margin-top: 0;
+}
+
+.header__back {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header__date {
+  font-size: 1.1em;
+  text-align: center;
+  color: var(--color-text-muted);
+  margin-bottom: 20px;
+}
+
+.header__art {
+  text-align: center;
+}
+
+.header__art pre {
+  color: var(--color-ascii-art);
+  display: inline-block;
+  font-family: monospace;
+  text-align: left;
+  font-size: 1em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h2, h3, h4, h5 {
+  color: var(--color-header);
+}
+
+.section {
+  margin: 25px 0;
+}
+
+.project-link, .note-link {
+  display: block;
+  margin: 5px 0;
+}
+
+.date {
+  color: var(--color-text-muted);
+  font-size: 1.1em;
+}
+
+.buttons {
+  border-top: 1px dashed var(--color-text-muted);
+  margin-top: 40px;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.button-88x31 {
+  border: 1px solid #000;
+  display: inline-block;
+  width: 88px;
+  height: 31px;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--color-link-visited);
+}
+
+a:hover {
+  text-decoration: underline;
+  background-color: var(--color-link-hover);
+}
+
+.last-updated {
+  text-align: center;
+  font-size: 0.8em;
+  color: var(--color-text-muted);
+}
+
+pre code {
+  font-family: 'freepixel', 'Courier New', monospace;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+  font-size: 1em;
+  margin: 0;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="/static/main.css">
+</head>
+
+<body>
+  {% block body %}{% endblock %}
+
+  <div class="buttons">
+    <img src="/static/88x31/firefox.gif" class="button-88x31">
+    <img src="/static/88x31/anime.gif" class="button-88x31">
+    <img src="/static/88x31/winrar4.gif" class="button-88x31">
+    <img src="/static/88x31/godot2.gif" class="button-88x31">
+    <img src="/static/88x31/gbc.gif" class="button-88x31">
+    <img src="/static/88x31/wm.gif" class="button-88x31">
+  </div>
+
+  <div class="last-updated">Last updated: {{ site.time.strftime("%Y-%m-%d") }} / No frames / No JavaScript</div>
+</body>
+
+</html>

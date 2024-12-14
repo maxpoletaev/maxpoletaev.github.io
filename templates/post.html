@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+<div class="header">
+  <div class="header__back"><a href="/">&larr; BACK TO HOME PAGE</a></div>
+  <h1 class="header__title -secondary">{{ post.title }}</h1>
+  <div class="header__date">Posted on {{ post.date }}</div>
+</div>
+
+<div class="post">
+  {{ post.content|safe }}
+</div>
+
+{% endblock %}

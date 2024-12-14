@@ -1,0 +1,5 @@
+Flask==3.0.3
+flask-babel==4.0.0
+Frozen-Flask==1.0.2
+Markdown==3.6
+PyYAML==6.0.1
