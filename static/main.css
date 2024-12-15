@@ -31,15 +31,31 @@
   src: url("freepixel.ttf") format("truetype");
 }
 
-body {
+html {
   font-family: 'freepixel', 'Courier New', monospace;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+body {
   font-size: 18px;
   max-width: 800px;
   margin: 20px auto;
   padding: 0 10px;
   line-height: 1.4;
-  color: var(--color-text);
-  background-color: var(--color-bg);
+}
+
+.main {
+  background-image: url("bg.png");
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  background-size: 300px;
+}
+
+@media screen and (max-width: 800px) {
+  .main {
+    background-image: none;
+  }
 }
 
 .header__title {

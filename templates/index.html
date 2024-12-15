@@ -9,45 +9,47 @@
   <h1 class="header__title">MAX POLETAEV'S SPACE</h1>
 </div>
 
-<div class="section">
-  <p>I'm a programmer who mainly works with Go and Python, but also loves digging deep into
-     how things work under the hood. So you'll often find me tinkering with database internals, retro 
-     hardware emulation, graphics programming, and other low-level stuff with C/ASM.</p>
-</div>
+<div class="main">
+  <div class="section">
+    <p>I'm a Go/Python programmer who also loves digging deep into how things work under the hood.
+      So you'll often find me tinkering with database internals, retro hardware emulation,
+      graphics programming, and probably low-level stuff with C/ASM.</p>
+  </div>
 
-<div class="section">
-  <h2>PROJECTS</h2>
-  <div class="project-link">
-    <a href="https://github.com/maxpoletaev/directcgo" target="_blank">&gt; Minimal Overhead C Interop for Golang</a>
+  <div class="section">
+    <h2>PROJECTS</h2>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/directcgo" target="_blank">&gt; Minimal Overhead C Interop for Golang</a>
+    </div>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/dendy" target="_blank">&gt; NES Emulator with Network Multiplayer</a>
+    </div>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/brickboy" target="_blank">&gt; Game Boy Emulator</a>
+    </div>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/gorender" target="_blank">&gt; Software 3D Rendering Engine</a>
+    </div>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/kivi" target="_blank">&gt; Distributed Key-Value Database</a>
+    </div>
   </div>
-  <div class="project-link">
-    <a href="https://github.com/maxpoletaev/dendy" target="_blank">&gt; NES Emulator with Network Multiplayer</a>
-  </div>
-  <div class="project-link">
-    <a href="https://github.com/maxpoletaev/brickboy" target="_blank">&gt; Game Boy Emulator</a>
-  </div>
-  <div class="project-link">
-    <a href="https://github.com/maxpoletaev/gorender" target="_blank">&gt; 3D Software Rendering Engine</a>
-  </div>
-  <div class="project-link">
-    <a href="https://github.com/maxpoletaev/kivi" target="_blank">&gt; Distributed Key-Value Database</a>
-  </div>
-</div>
 
-<div class="section">
-  <h2>RECENT NOTES</h2>
-  {% for post in posts %}
-  <div class="note-link">
-    <span class="date">[{{ post.date }}]</span>
-    <a href="{{ post.url }}">{{ post.title }}</a>
+  <div class="section">
+    <h2>RECENT NOTES</h2>
+    {% for post in posts %}
+    <div class="note-link">
+      <span class="date">[{{ post.date }}]</span>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
 
-<div class="section">
-  <h2>CONTACT</h2>
-  <div>Email: max.poletaev@gmail.com</div>
-  <div>Telegram: @maxpoletaev</div>
-  <div><s>ICQ: 3232923</s></div>
+  <div class="section">
+    <h2>CONTACT</h2>
+    <div>Email: max.poletaev@gmail.com</div>
+    <div>Telegram: @maxpoletaev</div>
+    <div><s>ICQ: 3232923</s></div>
+  </div>
 </div>
 {% endblock %}
