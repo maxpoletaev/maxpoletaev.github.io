@@ -15,7 +15,7 @@
   :root {
     --color-bg: #2E3440;
     --color-text: #ECEFF4;
-    --color-text-muted: #4C566A;
+    --color-text-muted: #626f88;
     --color-title: #88C0D0;
     --color-title-border: #88C0D0;
     --color-link: #BF616A;
@@ -32,12 +32,12 @@
 }
 
 html {
-  font-family: 'freepixel', 'Courier New', monospace;
-  color: var(--color-text);
   background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
 body {
+  font-family: 'freepixel', 'Courier New', monospace;
   font-size: 18px;
   max-width: 800px;
   margin: 20px auto;
@@ -46,14 +46,31 @@ body {
 }
 
 .main {
+  position: relative;
+}
+
+.main::after {
+  content: "";
   background-image: url("bg.png");
   background-position: bottom right;
   background-repeat: no-repeat;
   background-size: 300px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: -40px;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  .main::after {
+    filter: brightness(0.7);
+  }
 }
 
 @media screen and (max-width: 800px) {
-  .main {
+  .main::after {
     background-image: none;
   }
 }
@@ -114,7 +131,6 @@ h2, h3, h4, h5 {
 
 .date {
   color: var(--color-text-muted);
-  font-size: 1.1em;
 }
 
 .buttons {
@@ -122,13 +138,13 @@ h2, h3, h4, h5 {
   margin-top: 40px;
   text-align: center;
   padding-top: 20px;
+  image-rendering: pixelated;
 }
 
 .button-88x31 {
-  border: 1px solid #000;
   display: inline-block;
-  width: 88px;
   height: 31px;
+  width: 88px;
 }
 
 a {
@@ -145,7 +161,7 @@ a:hover {
   background-color: var(--color-link-hover);
 }
 
-.last-updated {
+.footer-text {
   text-align: center;
   font-size: 0.8em;
   color: var(--color-text-muted);
