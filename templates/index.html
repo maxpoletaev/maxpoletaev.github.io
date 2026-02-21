@@ -6,32 +6,36 @@
   <div class="header__art">
     <pre>{% include "art.txt" %}</pre>
   </div>
-  <h1 class="header__title">MAX POLETAEV'S SPACE</h1>
+  <h1 class="header__title">Max Poletaev's Corner <br>of the Internet</h1>
 </div>
 
 <div class="main">
-  <div class="section">
-    <p>I'm a Go/Python programmer who also loves digging deep into how things work under the hood.
-      So you'll often find me tinkering with database internals, retro hardware emulation,
-      graphics programming, and different low-level stuff with C/ASM.</p>
+  <div class="section intro">
+    <p>I'm a programmer specializing in information retrieval, recommender systems, 
+      and content moderation in high-throughput environments. Sometimes tinkering 
+      with database internals, retro hardware emulation, and graphics programming.</p>
   </div>
 
   <div class="section">
     <h2>PROJECTS</h2>
     <div class="project-link">
-      <a href="https://github.com/maxpoletaev/directcgo" target="_blank">&gt; Minimal Overhead C Interop for Golang</a>
+      <a href="https://github.com/maxpoletaev/nupsx" target="_blank">nuPSX - PlayStation Emulator and Debugger in Zig <span class="new-label"></span></a>
     </div>
     <div class="project-link">
-      <a href="https://github.com/maxpoletaev/dendy" target="_blank">&gt; NES Emulator with Network Multiplayer</a>
+      <a href="https://github.com/maxpoletaev/dendy" target="_blank">NES Emulator with Network Multiplayer</a>
+      (<a href="https://maxpoletaev.github.io/dendy/" target="_blank">Demo{% include "newtab.svg" %}</a>)
     </div>
     <div class="project-link">
-      <a href="https://github.com/maxpoletaev/brickboy" target="_blank">&gt; Game Boy Emulator</a>
+      <a href="https://github.com/maxpoletaev/directcgo" target="_blank">Zero Overhead C Interop for Golang Experiment</a>
     </div>
     <div class="project-link">
-      <a href="https://github.com/maxpoletaev/gorender" target="_blank">&gt; Software 3D Rendering Engine</a>
+      <a href="https://github.com/maxpoletaev/brickboy" target="_blank">Game Boy Emulator in good old C</a>
     </div>
     <div class="project-link">
-      <a href="https://github.com/maxpoletaev/kivi" target="_blank">&gt; Distributed Key-Value Database</a>
+      <a href="https://github.com/maxpoletaev/gorender" target="_blank">Software 3D Rendering Engine</a>
+    </div>
+    <div class="project-link">
+      <a href="https://github.com/maxpoletaev/kivi" target="_blank">Distributed Key-Value Database</a>
     </div>
   </div>
 
@@ -40,7 +44,7 @@
     {% for post in posts %}
     <div class="note-link">
       <span class="date">[{{ post.date }}]</span>
-      <a href="{{ post.url }}">{{ post.title }}</a>
+      <a href="{{ post.url }}">{{ post.short_title if post.short_title else post.title }}</a>
     </div>
     {% endfor %}
   </div>
