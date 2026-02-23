@@ -3,7 +3,7 @@
   --color-text: #000000;
   --color-text-muted: #666;
   --color-title: #000080;
-  --color-title-border: #000;
+  --color-title-border: #222;
   --color-link: #1818bd;
   --color-link-visited: #551a8b;
   --color-link-hover: #ffffe0;
@@ -34,6 +34,10 @@
   src: url("freepixel.ttf") format("truetype");
 }
 
+* {
+  box-sizing: border-box;
+}
+
 html {
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -42,7 +46,7 @@ html {
 body {
   font-family: var(--font-family);
   font-size: 19px;
-  max-width: 800px;
+  max-width: 820px;
   margin: 20px auto;
   padding: 0 10px;
   line-height: 1.3;
@@ -78,16 +82,21 @@ body {
   }
 }
 
+.header {
+  position: relative;
+  border-bottom: 2px solid var(--color-title-border);
+  padding-top: 10px;
+  margin-bottom: 30px;
+}
+
 .header__title {
   color: var(--color-title);
-  border-bottom: 2px solid var(--color-title-border);
   text-align: center;
   font-weight: bold;
   font-size: 2.5em;
   line-height: 1;
-  margin-top: 10px;
-  margin-bottom: 25px;
-  padding-bottom: 25px;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 .header__title.-secondary {
@@ -109,6 +118,15 @@ body {
 
 .header__art {
   text-align: center;
+  position: relative;
+  top: 6px;
+}
+
+#cat {
+  position: relative;
+  width: 100%;
+  height: 30px;
+  top: 1px;
 }
 
 .header__art pre {
@@ -194,6 +212,7 @@ pre code {
 }
 
 .new-label {
+  pointer-events: none;
   display: inline-block;
   vertical-align: middle;
   padding: 2px 4px;
@@ -203,7 +222,7 @@ pre code {
   color: #fff;
   position: absolute;
   transform: translate(8px, 6px);
-  animation: float 2s ease-in-out infinite;
+  animation: float 1s ease-in-out infinite;
 }
 
 .new-label::after {
