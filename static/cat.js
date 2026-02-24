@@ -11,25 +11,28 @@
   const BODY_WIDTH = (SPRITE_SIZE / 2) * SCALE;
   const WALK_SPEED = 65;
   const RUN_SPEED = 120;
-  const JUMP_SPEED = 50;
+  const JUMP_SPEED = 120;
   const RUN_THRESHOLD = BODY_WIDTH * 5;
+  const JUMP_THRESHOLD = BODY_WIDTH * 1.7;
+  const CURSOR_REACT_DELAY = 500;
 
   const ANIMS = {
-    sitting:   { row: 0, frames: 4, fps:  3 },
-    sitting2:  { row: 1, frames: 4, fps:  3 },
-    cleaning:  { row: 2, frames: 4, fps:  6 },
-    cleaning2: { row: 3, frames: 4, fps:  6 },
+    sitting:   { row: 0, frames: 4, fps: 3 },
+    sitting2:  { row: 1, frames: 4, fps: 3 },
+    cleaning:  { row: 2, frames: 4, fps: 6 },
+    cleaning2: { row: 3, frames: 4, fps: 6 },
     walking:   { row: 4, frames: 8, fps: 10 },
     running:   { row: 5, frames: 8, fps: 14 },
-    sleeping:  { row: 6, frames: 4, fps:  2 },
-    touching:  { row: 7, frames: 6, fps:  8, once: true },
-    jumping:   { row: 8, frames: 7, fps:  8, once: true },
+    sleeping:  { row: 6, frames: 4, fps: 2 },
+    touching:  { row: 7, frames: 6, fps: 8,  once: true },
+    jumping:   { row: 8, frames: 4, fps: 12, once: true },
     scared:    { row: 9, frames: 8, fps: 12, once: true },
   };
 
   const WANDER_SEQUENCE = [
-    'sitting', 'walking', 'sitting2', 'walking',
-    'jumping', 'sitting', 'cleaning', 'cleaning2', 'sleeping',
+    'sitting','walking', 'sitting2', 'walking',
+    'sitting', 'cleaning', 'cleaning2',
+    'cleaning', 'cleaning2', 'sleeping',
   ];
 
   const IDLE_DURATION = {
@@ -37,7 +40,7 @@
     sitting2:  [1000, 2000],
     cleaning:  [2000, 3000],
     cleaning2: [2000, 3000],
-    sleeping:  [6000, 10000],
+    sleeping:  [7000, 15000],
   };
 
   const rand = (a, b) => a + Math.random() * (b - a);
@@ -98,6 +101,7 @@
   let speed = 0;
   let lastTs = null;
   let wanderIdx = Math.floor(Math.random() * WANDER_SEQUENCE.length);
+  let cursorReactMs = 0;
 
   // --- Behaviour ---
 
@@ -135,7 +139,8 @@
       return;
     }
     const side = cursorX > catCenterX() ? 0.75 : 0.25;
-    const gait = dist > RUN_THRESHOLD ? 'running' : 'walking';
+    const alreadyRunning = moving && anim === 'running';
+    const gait = (alreadyRunning || dist > RUN_THRESHOLD) ? 'running' : 'walking';
     startMoving(gait, cursorX - SCALED_SIZE * side);
   }
 
@@ -177,14 +182,26 @@
     const justEntered = cursorX !== null && prevCursorX === null;
     const justLeft    = cursorX === null && prevCursorX !== null;
 
-    if (justEntered && !ANIMS[anim].once) next();
-    if (justLeft) wanderIdx = -1;
+    if (justEntered) cursorReactMs = CURSOR_REACT_DELAY;
+    if (justLeft) {
+      const hadReacted = cursorReactMs === 0;
+      wanderIdx = -1;
+      cursorReactMs = 0;
+      if (hadReacted && moving) startIdle('sitting');
+    }
 
     prevCursorX = cursorX;
   }
 
   function updatePosition(dt) {
     if (moving) {
+      if (anim === 'running' && cursorX !== null && distToCursor() < JUMP_THRESHOLD) {
+        anim = 'jumping';
+        frame = 0;
+        frameMs = 0;
+        moving = false;
+        return;
+      }
       posX = clampX(posX + facing * speed * dt / 1000);
       const reached = facing === 1 ? posX >= targetX : posX <= targetX;
       if (reached) { posX = targetX; next(); }
@@ -216,6 +233,13 @@
 
     advanceFrame(dt);
     handleCursorEdges();
+    if (cursorReactMs > 0) {
+      cursorReactMs -= dt;
+      if (cursorReactMs <= 0 && cursorX !== null && !ANIMS[anim].once) {
+        cursorReactMs = 0;
+        next();
+      }
+    }
     updatePosition(dt);
     render();
 
