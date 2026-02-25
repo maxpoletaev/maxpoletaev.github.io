@@ -3,6 +3,7 @@
   --color-text: #000000;
   --color-text-muted: #666;
   --color-title: #000080;
+  --color-title-stroke: #bfbfbf;
   --color-title-border: #222;
   --color-link: #1818bd;
   --color-link-visited: #551a8b;
@@ -11,6 +12,7 @@
   --color-header: #1a472a;
   --color-new-label-muted: #bdbdbd;
   --font-family: 'freepixel', 'Courier New', monospace;
+  --title-font-family: 'freepixel', 'Arial Black', sans-serif;
 }
 
 @media screen and (prefers-color-scheme: dark) {
@@ -19,6 +21,7 @@
     --color-text: #eceff4;
     --color-text-muted: #626f88;
     --color-title: #88c0d0;
+    --color-title-stroke: #6d486c;
     --color-title-border: #88c0d0;
     --color-link: #bf616a;
     --color-link-visited: #b48ead;
@@ -84,12 +87,13 @@ body {
 
 .header {
   position: relative;
-  border-bottom: 2px solid var(--color-title-border);
   padding-top: 10px;
   margin-bottom: 30px;
+  border-bottom: 2px solid var(--color-title-border);
 }
 
 .header__title {
+  font-family: var(--title-font-family);
   color: var(--color-title);
   text-align: center;
   font-weight: bold;
@@ -250,7 +254,7 @@ a:visited .new-label {
     padding: 0 15px;
   }
   .header__title {
-    font-size: 30px;
+    font-size: 2em;
   }
 }
 
