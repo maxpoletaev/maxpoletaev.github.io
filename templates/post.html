@@ -2,14 +2,14 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
-<div class="header">
-  <div class="header__back"><a href="/">&larr; BACK TO HOME PAGE</a></div>
-  <h1 class="header__title -secondary">{{ post.title }}</h1>
-  <div class="header__date">Posted on {{ post.date }}</div>
+<div class="box">
+  <div class="box__title">{{ post.title }}</div>
+  <div class="box__body post">
+    <div class="post__meta">
+      <a href="/">&laquo; Back to home page</a>
+      <span class="post__date">Posted on {{ post.date.strftime("%d.%m.%Y") }}</span>
+    </div>
+    {{ post.content|safe }}
+  </div>
 </div>
-
-<div class="post">
-  {{ post.content|safe }}
-</div>
-
 {% endblock %}

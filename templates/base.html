@@ -1,30 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock %}</title>
+  <script>
+    (function (h) {
+      try {
+        // Load window state before the window is drawn (see window.js)
+        var s = JSON.parse(sessionStorage.getItem('window'));
+        if (!s) return;
+        if (s.state === 'minimized' || s.state === 'closed') h.classList.add('is-' + s.state);
+        if (s.max === true) h.classList.add('is-maximized');
+        var x = Number(s.x) || 0, y = Number(s.y) || 0;
+        if (x || y) h.style.setProperty('--win-offset', x + 'px ' + y + 'px');
+      } catch (e) {}
+    })(document.documentElement);
+  </script>
   <link rel="stylesheet" href="/static/main.css">
+  <script src="/static/cat.js" defer></script>
+  <script src="/static/site.js" defer></script>
+  <script src="/static/window.js" defer></script>
 </head>
 
 <body>
-  {% block body %}{% endblock %}
+  <div class="page window">
+    <div class="titlebar">
+      <span class="titlebar__icon" aria-hidden="true"></span>
+      <span class="titlebar__text">{{ self.title() }}</span>
+      <span class="titlebar__buttons">
+        <button type="button" class="tb-btn tb-btn--min" data-action="minimize" aria-label="Minimize"></button>
+        <button type="button" class="tb-btn tb-btn--max" data-action="maximize" aria-label="Maximize"></button>
+        <button type="button" class="tb-btn tb-btn--close" data-action="close" aria-label="Close"></button>
+      </span>
+    </div>
 
-  <div class="buttons">
-    <img src="/static/88x31/firefox.gif" class="button-88x31">
-    <img src="/static/88x31/anime.gif" class="button-88x31">
-    <img src="/static/88x31/winrar4.gif" class="button-88x31">
-    <img src="/static/88x31/godot2.gif" class="button-88x31">
-    <img src="/static/88x31/gbc.gif" class="button-88x31">
-    <img src="/static/88x31/wm.gif" class="button-88x31">
+    <div class="window__body">
+    <header class="banner">
+      <div class="banner__text">
+        <span class="banner__title">Max Poletaev</span>
+        <span class="banner__sub">emulators &middot; databases &middot; graphics</span>
+      </div>
+      <div class="banner__girl" aria-hidden="true"></div>
+    </header>
+
+    <nav class="menu">
+      <a href="/" class="btn">Home</a>
+      <a href="/#projects" class="btn">Projects</a>
+      <a href="/#notes" class="btn">Notes</a>
+      <a href="#contact" class="btn">Contact</a>
+      <a href="/static/masya.webp" class="btn">My cat</a>
+      <span class="menu__date">Last updated: {{ site.time.strftime("%d.%m.%Y") }}</span>
+    </nav>
+
+    <div class="layout">
+      <main class="content">
+        {% block body %}{% endblock %}
+        <div id="cat"></div>
+      </main>
+
+      <aside class="sidebar">
+        <div class="box" id="contact">
+          <div class="box__title">Contact</div>
+          <div class="box__body">
+            <div><b>E-mail:</b><br>max.poletaev@gmail.com</div>
+            <div><b>Telegram:</b><br>@maxpoletaev</div>
+            <div><s><b>ICQ:</b><br>3232923</s></div>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box__title">My cat</div>
+          <div class="box__body box__body--center">
+            <a href="/static/masya.webp" class="photo"><img src="/static/masya.webp" alt="My cat" width="130" height="173"></a>
+          </div>
+        </div>
+
+        <div class="box poll">
+          <div class="box__title">Poll</div>
+          <div class="box__body">
+            <p class="poll__q">Your favorite game?</p>
+            <form class="poll__form">
+              <label><input type="radio" name="poll" value="Tetris"> Tetris</label>
+              <label><input type="radio" name="poll" value="Doom"> Doom</label>
+              <label><input type="radio" name="poll" value="Heroes III"> Heroes III</label>
+              <label><input type="radio" name="poll" value="Half-Life"> Half-Life</label>
+              <button type="submit" class="btn">Vote!</button>
+            </form>
+            <div class="poll__results" hidden></div>
+          </div>
+        </div>
+
+        <div class="box counter-box" hidden>
+          <div class="box__title">Counter</div>
+          <div class="box__body box__body--center">
+            <div class="counter" aria-label="Visitors"></div>
+            <div class="small">visitors so far</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="footer">
+      <div class="buttons">
+        <img src="/static/88x31/firefox.gif" class="button-88x31" alt="Firefox">
+        <img src="/static/88x31/anime.gif" class="button-88x31" alt="Anime">
+        <img src="/static/88x31/winrar4.gif" class="button-88x31" alt="WinRAR">
+        <img src="/static/88x31/godot2.gif" class="button-88x31" alt="Godot">
+        <img src="/static/88x31/gbc.gif" class="button-88x31" alt="Game Boy Color">
+        <img src="/static/88x31/wm.gif" class="button-88x31" alt="Windows Media">
+      </div>
+
+      <div class="footer-text">W3C compliant? Probably not. </div>
+      <div class="footer-text">Website analytics by <a href="https://www.goatcounter.com" target="_blank">GoatCounter</a></div>
+    </footer>
+    </div>
+
+    <div class="statusbar">
+      <span class="statusbar__field statusbar__field--main">Done</span>
+      <span class="statusbar__field statusbar__field--zone">Internet</span>
+    </div>
   </div>
 
-  <div class="footer-text">W3C compliant? Probably not. Best experienced with good coffee.</div>
-  <div class="footer-text">Last updated: {{ site.time.strftime("%Y-%m-%d") }} / No Frames / No Tracking / No AI</div>
-  <div class="footer-text">Website analytics by <a href="https://www.goatcounter.com" target="_blank">GoatCounter</a></div>
-
-  <img src="https://mxp.goatcounter.com/count?p={{ site.current_url }}" alt="" width="1" height="1">
+  <img src="https://mxp.goatcounter.com/count?p={{ site.current_url }}" alt="" width="1" height="1" class="pixel">
 </body>
 
 </html>

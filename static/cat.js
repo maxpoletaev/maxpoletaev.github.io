@@ -17,36 +17,36 @@
   const CURSOR_REACT_DELAY = 500;
 
   const ANIMS = {
-    sitting:   { row: 0, frames: 4, fps: 3 },
-    sitting2:  { row: 1, frames: 4, fps: 3 },
-    cleaning:  { row: 2, frames: 4, fps: 6 },
+    sitting: { row: 0, frames: 4, fps: 3 },
+    sitting2: { row: 1, frames: 4, fps: 3 },
+    cleaning: { row: 2, frames: 4, fps: 6 },
     cleaning2: { row: 3, frames: 4, fps: 6 },
-    walking:   { row: 4, frames: 8, fps: 10 },
-    running:   { row: 5, frames: 8, fps: 14 },
-    sleeping:  { row: 6, frames: 4, fps: 2 },
-    touching:  { row: 7, frames: 6, fps: 8,  once: true },
-    jumping:   { row: 8, frames: 4, fps: 12, once: true },
-    scared:    { row: 9, frames: 8, fps: 12, once: true },
+    walking: { row: 4, frames: 8, fps: 10 },
+    running: { row: 5, frames: 8, fps: 14 },
+    sleeping: { row: 6, frames: 4, fps: 2 },
+    touching: { row: 7, frames: 6, fps: 8, once: true },
+    jumping: { row: 8, frames: 4, fps: 12, once: true },
+    scared: { row: 9, frames: 8, fps: 12, once: true },
   };
 
   const WANDER_SEQUENCE = [
-    'sitting','walking', 'sitting2', 'walking',
+    'sitting', 'walking', 'sitting2', 'walking',
     'sitting', 'cleaning', 'cleaning2',
     'cleaning', 'cleaning2', 'sleeping',
   ];
 
   const IDLE_DURATION = {
-    sitting:   [3000, 5000],
-    sitting2:  [1000, 2000],
-    cleaning:  [2000, 3000],
+    sitting: [3000, 5000],
+    sitting2: [1000, 2000],
+    cleaning: [2000, 3000],
     cleaning2: [2000, 3000],
-    sleeping:  [7000, 15000],
+    sleeping: [7000, 15000],
   };
 
   const rand = (a, b) => a + Math.random() * (b - a);
   const clampX = (x) => Math.max(0, Math.min(container.offsetWidth - SCALED_SIZE, x));
 
-  // --- Sprite element ---
+  // Sprite element
 
   const sprite = document.createElement('div');
   sprite.style.cssText = `
@@ -63,7 +63,7 @@
   `;
   container.appendChild(sprite);
 
-  // --- Cursor tracking ---
+  // Cursor tracking
 
   let cursorX = null;
   let prevCursorX = null;
@@ -74,7 +74,7 @@
     document.addEventListener('mousemove', (e) => {
       const rect = container.getBoundingClientRect();
       const inside = e.clientX >= rect.left && e.clientX <= rect.right &&
-                     e.clientY >= rect.top  && e.clientY <= rect.bottom;
+        e.clientY >= rect.top && e.clientY <= rect.bottom;
       cursorX = inside ? e.clientX - rect.left : null;
     });
     document.addEventListener('mouseleave', () => { cursorX = null; });
@@ -88,7 +88,7 @@
     return cursorX !== null ? Math.abs(cursorX - catCenterX()) : Infinity;
   }
 
-  // --- State ---
+  // State
 
   let posX = rand(0, clampX(Infinity));
   let targetX = posX;
@@ -103,12 +103,12 @@
   let wanderIdx = Math.floor(Math.random() * WANDER_SEQUENCE.length);
   let cursorReactMs = 0;
 
-  // --- Behaviour ---
+  // Behaviour
 
   function startIdle(name) {
-    moving  = false;
-    anim    = name;
-    frame   = 0;
+    moving = false;
+    anim = name;
+    frame = 0;
     frameMs = 0;
     if (!ANIMS[name].once) {
       const [min, max] = IDLE_DURATION[name];
@@ -123,13 +123,13 @@
       startIdle(distToCursor() < BODY_WIDTH ? 'touching' : 'sitting');
       return;
     }
-    anim    = gait;
-    speed   = gait === 'running' ? RUN_SPEED : WALK_SPEED;
-    facing  = dx > 0 ? 1 : -1;
+    anim = gait;
+    speed = gait === 'running' ? RUN_SPEED : WALK_SPEED;
+    facing = dx > 0 ? 1 : -1;
     targetX = tx;
-    frame   = 0;
+    frame = 0;
     frameMs = 0;
-    moving  = true;
+    moving = true;
   }
 
   function followCursor() {
@@ -163,7 +163,7 @@
     }
   }
 
-  // --- Animation & movement ---
+  // Animation and movement
 
   function advanceFrame(dt) {
     const def = ANIMS[anim];
@@ -180,7 +180,7 @@
 
   function handleCursorEdges() {
     const justEntered = cursorX !== null && prevCursorX === null;
-    const justLeft    = cursorX === null && prevCursorX !== null;
+    const justLeft = cursorX === null && prevCursorX !== null;
 
     if (justEntered) cursorReactMs = CURSOR_REACT_DELAY;
     if (justLeft) {

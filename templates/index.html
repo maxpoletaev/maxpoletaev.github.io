@@ -2,58 +2,66 @@
 {% block title %}Max Poletaev{% endblock %}
 
 {% block body %}
-<div class="header">
-  <h1 class="header__title">Max Poletaev's Corner<br>of the&nbsp;Internet</h1>
-  <div id="cat"></div><script src="/static/cat.js" defer></script>
-</div>
-
-<div class="main">
-  <div class="section intro">
-    <p>Hey, thanks for visiting! My name is Max, I'm a programmer working on information retrieval and 
-      recommender systems. But often, you can find me tinkering with database internals, 
+<div class="box">
+  <div class="box__title">Welcome!</div>
+  <div class="box__body intro">
+    <p>Hey, thanks for visiting! My name is Max, I'm a programmer working on information retrieval and
+      recommender systems. But often, you can find me tinkering with database internals,
       retro hardware emulation, and graphics programming.</p>
     <p>This was supposed to be a programming blog, but there is not much to do here at the&nbsp;moment.
       If you're bored, you can check out <a href="/static/masya.webp">this&nbsp;picture</a> of my cat.</p>
   </div>
+</div>
 
-  <div class="section">
-    <h2>PROJECTS</h2>
-    <div class="project-link">
-      <a href="https://maxpoletaev.github.io/nupsx/" target="_blank">nuPSX - PlayStation Emulator and Debugger in Zig<span class="new-label"></span></a>
-    </div>
-    <div class="project-link">
-      <a href="https://github.com/maxpoletaev/dendy" target="_blank">NES Emulator with Network Multiplayer</a>
-      (<a href="https://maxpoletaev.github.io/dendy/" target="_blank">Demo{% include "newtab.svg" %}</a>)
-    </div>
-    <div class="project-link">
-      <a href="https://github.com/maxpoletaev/directcgo" target="_blank">Zero Overhead C Interop for Golang Experiment</a>
-    </div>
-    <div class="project-link">
-      <a href="https://github.com/maxpoletaev/brickboy" target="_blank">Game Boy Emulator in good old C</a>
-    </div>
-    <div class="project-link">
-      <a href="https://github.com/maxpoletaev/gorender" target="_blank">Software 3D Rendering Engine</a>
-    </div>
-    <div class="project-link">
-      <a href="https://github.com/maxpoletaev/kivi" target="_blank">Distributed Key-Value Database</a>
-    </div>
+<div class="box" id="projects">
+  <div class="box__title">Projects</div>
+  <div class="box__body box__body--flush">
+    <table class="grid">
+      <thead>
+        <tr><th>Year</th><th>Project</th><th>What is it</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="grid__year">2025</td>
+          <td><a href="https://maxpoletaev.github.io/nupsx/" target="_blank">nuPSX</a> <span class="new-label">NEW</span></td>
+          <td>PlayStation emulator and debugger</td>
+        </tr>
+        <tr>
+          <td class="grid__year">2024</td>
+          <td><a href="https://github.com/maxpoletaev/gorender" target="_blank">goRender</a></td>
+          <td>Software 3D rendering engine</td>
+        </tr>
+        <tr>
+          <td class="grid__year">2023</td>
+          <td><a href="https://maxpoletaev.github.io/dendy/" target="_blank">Dendy</a></td>
+          <td>NES emulator with network multiplayer</td>
+        </tr>
+        <tr>
+          <td class="grid__year">2023</td>
+          <td><a href="https://github.com/maxpoletaev/brickboy" target="_blank">BrickBoy</a></td>
+          <td>Game Boy emulator in good old C</td>
+        </tr>
+        <tr>
+          <td class="grid__year">2022</td>
+          <td><a href="https://github.com/maxpoletaev/kivi" target="_blank">Kivi</a></td>
+          <td>Distributed key-value database</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <div class="section">
-    <h2>RECENT NOTES</h2>
-    {% for post in posts %}
-    <div class="note-link">
-      <span class="date">[{{ post.date }}]</span>
-      <a href="{{ post.url }}">{{ post.short_title if post.short_title else post.title }}</a>
-    </div>
-    {% endfor %}
-  </div>
-
-  <div class="section">
-    <h2>CONTACT</h2>
-    <div>E-mail: max.poletaev@gmail.com</div>
-    <div>Telegram: @maxpoletaev</div>
-    <div><s>ICQ: 3232923</s></div>
+<div class="box" id="notes">
+  <div class="box__title">Recent notes</div>
+  <div class="box__body">
+    <ul class="notes">
+      {% for post in posts %}
+      <li>
+        <span class="notes__date">{{ post.date.strftime("%d.%m.%Y") }}</span>
+        <a href="{{ post.url }}">{{ post.short_title if post.short_title else post.title }}</a>
+      </li>
+      {% endfor %}
+    </ul>
   </div>
 </div>
 {% endblock %}
