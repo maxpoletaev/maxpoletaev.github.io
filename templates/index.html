@@ -54,14 +54,8 @@
 <div class="box" id="notes">
   <div class="box__title">Recent notes</div>
   <div class="box__body">
-    <ul class="notes">
-      {% for post in posts %}
-      <li>
-        <span class="notes__date">{{ post.date.strftime("%d.%m.%Y") }}</span>
-        <a href="{{ post.url }}">{{ post.short_title if post.short_title else post.title }}</a>
-      </li>
-      {% endfor %}
-    </ul>
+    {% with posts = posts[:5] %}{% include "notes_list.html" %}{% endwith %}
+    <p class="notes__all"><a href="/notes/">All notes &raquo;</a></p>
   </div>
 </div>
 {% endblock %}

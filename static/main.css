@@ -739,6 +739,10 @@ a:hover {
   background: linear-gradient(var(--accent), var(--accent)) 2px 0.6em / 5px 5px no-repeat;
 }
 
+.notes__all {
+  margin: 8px 0 0;
+}
+
 .notes__date {
   color: var(--muted);
   margin-right: 6px;
@@ -838,7 +842,6 @@ a:hover {
   padding-bottom: 8px;
   margin-bottom: 12px;
   border-bottom: 1px dashed var(--line);
-  font-size: 11px;
 }
 
 .post__date {
@@ -857,6 +860,10 @@ a:hover {
 
 .post h2 {
   font-size: 16px;
+}
+
+.post li + li {
+  margin-top: 6px;
 }
 
 .post img {

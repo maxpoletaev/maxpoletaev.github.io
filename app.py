@@ -87,7 +87,7 @@ def index():
 
 @app.route('/notes/')
 def blog_index():
-    return static_reidrect('/')
+    return render_template('notes.html', posts=Content.get_blog_posts())
 
 
 @app.route('/notes/<slug>/')
