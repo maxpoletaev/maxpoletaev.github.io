@@ -472,6 +472,13 @@ a:hover {
 
 .dialog__buttons .btn {
   min-width: 75px;
+  height: 23px;
+  padding: 0 10px;
+  font-family: var(--font);
+}
+
+.dialog__buttons .btn:active {
+  padding: 1px 9px 0 11px;
 }
 
 /* Banner */
