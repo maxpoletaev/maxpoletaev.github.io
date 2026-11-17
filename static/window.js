@@ -2,7 +2,7 @@
   'use strict';
 
   const root = document.documentElement;
-  const win = document.querySelector('.window');
+  const win = document.querySelector('.page.window');
   const titlebar = win && win.querySelector('.titlebar');
   if (!win || !titlebar) return;
 
@@ -23,8 +23,8 @@
 
   function save() {
     const data = {
-      x: offsetX,
-      y: offsetY,
+      x: winDrag.x,
+      y: winDrag.y,
       max: root.classList.contains('is-maximized'),
       state: currentState(),
     };
@@ -33,60 +33,86 @@
     } catch (err) {}
   }
 
-  // Dragging
+  // Window controls
 
-  let offsetX = Number(saved.x) || 0;
-  let offsetY = Number(saved.y) || 0;
-  let drag = null;
+  function makeDraggable(el, handle, { x = 0, y = 0, apply, canDrag = () => true, onEnd = () => {} }) {
+    const d = { x, y, clamp, set };
+    let grab = null;
 
-  function applyOffset() {
-    if (offsetX || offsetY) {
-      root.style.setProperty('--win-offset', `${offsetX}px ${offsetY}px`);
-    } else {
-      root.style.removeProperty('--win-offset');
+    function set(nx, ny) {
+      d.x = nx;
+      d.y = ny;
+      apply(nx, ny);
     }
+
+    function clamp() {
+      const keep = 80;
+      const minX = -(el.offsetLeft + el.offsetWidth - keep);
+      const maxX = window.innerWidth - el.offsetLeft - keep;
+      let ny = Math.max(-el.offsetTop, d.y);
+      if (getComputedStyle(el).position === 'fixed') {
+        ny = Math.min(window.innerHeight - el.offsetTop - handle.offsetHeight, ny);
+      }
+      set(Math.min(maxX, Math.max(minX, d.x)), ny);
+    }
+
+    handle.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.pointerType === 'touch') return;
+      if (e.target.closest('button') || !canDrag()) return;
+      grab = { x: e.clientX - d.x, y: e.clientY - d.y };
+      try { handle.setPointerCapture(e.pointerId); } catch (err) {}
+      root.classList.add('is-dragging');
+    });
+
+    handle.addEventListener('pointermove', (e) => {
+      if (!grab) return;
+      d.x = e.clientX - grab.x;
+      d.y = e.clientY - grab.y;
+      clamp();
+    });
+
+    function end() {
+      if (!grab) return;
+      grab = null;
+      root.classList.remove('is-dragging');
+      onEnd();
+    }
+
+    handle.classList.add('is-draggable');
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
+
+    return d;
   }
 
-  // Keep a restored position reachable if the viewport shrank since it was saved.
+  function bindActions(bar, actions) {
+    bar.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      const fn = btn && actions[btn.dataset.action];
+      if (fn) fn();
+    });
+  }
+
+  // Main window dragging
+
+  const winDrag = makeDraggable(win, titlebar, {
+    x: Number(saved.x) || 0,
+    y: Number(saved.y) || 0,
+    apply: (x, y) => {
+      if (x || y) {
+        root.style.setProperty('--win-offset', `${x}px ${y}px`);
+      } else {
+        root.style.removeProperty('--win-offset');
+      }
+    },
+    canDrag: () => !root.classList.contains('is-maximized'),
+    onEnd: save,
+  });
+
+
   function reclamp() {
-    if (currentState()) return;
-    [offsetX, offsetY] = clampOffset(offsetX, offsetY);
-    applyOffset();
+    if (!currentState()) winDrag.clamp();
   }
-
-  function clampOffset(x, y) {
-    const keep = 80; // how much of the titlebar stays visible
-    const minX = -(win.offsetLeft + win.offsetWidth - keep);
-    const maxX = window.innerWidth - win.offsetLeft - keep;
-    const minY = -win.offsetTop;
-    return [Math.min(maxX, Math.max(minX, x)), Math.max(minY, y)];
-  }
-
-  titlebar.classList.add('is-draggable');
-
-  titlebar.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0 || e.pointerType === 'touch') return;
-    if (e.target.closest('button') || root.classList.contains('is-maximized')) return;
-    drag = { x: e.clientX - offsetX, y: e.clientY - offsetY };
-    try { titlebar.setPointerCapture(e.pointerId); } catch (err) {}
-    root.classList.add('is-dragging');
-  });
-
-  titlebar.addEventListener('pointermove', (e) => {
-    if (!drag) return;
-    [offsetX, offsetY] = clampOffset(e.clientX - drag.x, e.clientY - drag.y);
-    applyOffset();
-  });
-
-  function endDrag() {
-    if (!drag) return;
-    drag = null;
-    root.classList.remove('is-dragging');
-    save();
-  }
-
-  titlebar.addEventListener('pointerup', endDrag);
-  titlebar.addEventListener('pointercancel', endDrag);
 
   // Maximize
 
@@ -107,6 +133,8 @@
   let taskbar = null;
   let taskBtn = null;
   let icon = null;
+  let hlIcon = null;
+  let dialog = null;
   let clockTimer = null;
 
   function makeIcon(cls) {
@@ -114,6 +142,61 @@
     span.className = cls;
     span.setAttribute('aria-hidden', 'true');
     return span;
+  }
+
+  function makeDesktopIcon(imgClass, text, open) {
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'desktop-icon';
+    const label = document.createElement('span');
+    label.className = 'desktop-icon__label';
+    label.textContent = text;
+    el.append(makeIcon(imgClass), label);
+    el.addEventListener('dblclick', open);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') open();
+    });
+    el.addEventListener('pointerup', (e) => {
+      if (e.pointerType === 'touch') open();
+    });
+    return el;
+  }
+
+  function closeDialog() {
+    if (!dialog) return;
+    dialog.remove();
+    dialog = null;
+    if (hlIcon) hlIcon.focus();
+  }
+
+  function showDiskError() {
+    if (dialog) dialog.remove();
+    const tpl = document.getElementById('disk-error');
+    const el = (dialog = tpl.content.firstElementChild.cloneNode(true));
+    const retry = el.querySelector('[data-action="retry"]');
+
+    makeDraggable(el, el.querySelector('.titlebar'), {
+      apply: (x, y) => { el.style.translate = `${x}px ${y}px`; },
+    });
+
+    bindActions(el, {
+      close: closeDialog,
+      retry: () => {
+        el.hidden = true;
+        setTimeout(() => {
+          if (dialog !== el) return;
+          el.hidden = false;
+          retry.focus();
+        }, 600);
+      },
+    });
+
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDialog();
+    });
+
+    document.body.append(el);
+    retry.focus();
   }
 
   function updateClock(el) {
@@ -141,22 +224,11 @@
 
     taskbar.append(taskBtn, clock);
 
-    icon = document.createElement('button');
-    icon.type = 'button';
-    icon.className = 'desktop-icon';
-    const iconLabel = document.createElement('span');
-    iconLabel.className = 'desktop-icon__label';
-    iconLabel.textContent = "Max Poletaev's Corner";
-    icon.append(makeIcon('desktop-icon__img'), iconLabel);
-    icon.addEventListener('dblclick', reopen);
-    icon.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') reopen();
-    });
-    icon.addEventListener('pointerup', (e) => {
-      if (e.pointerType === 'touch') reopen();
-    });
+    icon = makeDesktopIcon('desktop-icon__img', "Max Poletaev's Corner", reopen);
+    hlIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--hl', 'Half-Life', showDiskError);
+    hlIcon.classList.add('desktop-icon--second');
 
-    document.body.append(icon, taskbar);
+    document.body.append(icon, hlIcon, taskbar);
   }
 
   function showDesktop(withTask) {
@@ -167,9 +239,11 @@
   function hideDesktop() {
     if (!taskbar) return;
     clearInterval(clockTimer);
+    if (dialog) dialog.remove();
     taskbar.remove();
     icon.remove();
-    taskbar = taskBtn = icon = null;
+    hlIcon.remove();
+    taskbar = taskBtn = icon = hlIcon = dialog = null;
   }
 
   // Minimize, close, restore
@@ -185,8 +259,7 @@
     root.classList.remove('is-minimized', 'is-maximized');
     root.classList.add('is-closed');
     maxBtn.setAttribute('aria-label', 'Maximize');
-    offsetX = offsetY = 0;
-    applyOffset();
+    winDrag.set(0, 0);
     showDesktop(false);
     icon.focus();
     save();
@@ -204,14 +277,7 @@
     window.scrollTo(0, 0);
   }
 
-  titlebar.addEventListener('click', (e) => {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    if (action === 'minimize') minimize();
-    if (action === 'maximize') toggleMaximize();
-    if (action === 'close') close();
-  });
+  bindActions(titlebar, { minimize, maximize: toggleMaximize, close });
 
   // Restore saved state
 

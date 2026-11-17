@@ -26,24 +26,42 @@
   // Poll
 
   const POLL_KEY = 'poll-game';
+  const POLL_SEED = { Tetris: 3, Doom: 27, 'Heroes III': 29, 'Half-Life': 34 };
   const form = document.querySelector('.poll__form');
   const results = document.querySelector('.poll__results');
 
   function showResults(choice) {
     const options = Array.from(form.querySelectorAll('input')).map((i) => i.value);
-    results.textContent = '';
+    const counts = {};
+    let total = 0;
     for (const opt of options) {
-      const pct = opt === choice ? 100 : 0;
+      counts[opt] = (POLL_SEED[opt] || 0) + (opt === choice ? 1 : 0);
+      total += counts[opt];
+    }
+
+
+    const exact = options.map((opt) => (counts[opt] / total) * 100);
+    const pcts = exact.map(Math.floor);
+    const missing = 100 - pcts.reduce((a, b) => a + b, 0);
+
+    exact
+      .map((v, i) => ({ i, frac: v - Math.floor(v) }))
+      .sort((a, b) => b.frac - a.frac)
+      .slice(0, missing)
+      .forEach(({ i }) => (pcts[i] += 1));
+
+    results.textContent = '';
+    options.forEach((opt, i) => {
       const row = document.createElement('div');
       row.className = 'poll__row';
-      row.innerHTML = `<span></span> <b>${pct}%</b><div class="poll__bar"><span style="width:${pct}%"></span></div>`;
+      row.innerHTML = `<span></span> <b>${pcts[i]}%</b><div class="poll__bar"><span style="width:${pcts[i]}%"></span></div>`;
       row.firstChild.textContent = opt;
       results.appendChild(row);
-    }
-    const total = document.createElement('div');
-    total.className = 'small';
-    total.textContent = 'Total votes: 1. Thank you for voting!';
-    results.appendChild(total);
+    });
+    const totalEl = document.createElement('div');
+    totalEl.className = 'small';
+    totalEl.textContent = `Total votes: ${total}. Thank you for voting!`;
+    results.appendChild(totalEl);
     form.hidden = true;
     results.hidden = false;
   }

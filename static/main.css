@@ -315,7 +315,7 @@ a:hover {
   border: 0;
   background: none;
   font: inherit;
-  font-size: 12px;
+  font-size: 10px;
   color: #fff;
 }
 
@@ -324,6 +324,14 @@ a:hover {
   height: 32px;
   background: url('cat.png') -14px -32px / 512px 640px no-repeat;
   image-rendering: pixelated;
+}
+
+.desktop-icon--second {
+  top: 104px;
+}
+
+.desktop-icon__img--hl {
+  background: url('half-life.png') center / 32px 32px no-repeat;
 }
 
 .desktop-icon__label {
@@ -391,6 +399,60 @@ a:hover {
   font-size: 12px;
   line-height: 1;
   box-shadow: inset 1px 1px var(--btn-shadow), inset -1px -1px var(--btn-light);
+}
+
+/* Error dialog */
+
+.dialog {
+  /* Centered without translate, which holds the drag offset */
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+  height: fit-content;
+  margin: auto;
+}
+
+.dialog[hidden] {
+  display: none;
+}
+
+.dialog__body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 14px 12px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.dialog__body p {
+  margin: 0;
+}
+
+.dialog__sign {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #c00000;
+  box-shadow: inset -2px -2px #700000, inset 2px 2px #ff6060;
+  color: #fff;
+  font-size: 20px;
+  line-height: 32px;
+  text-align: center;
+}
+
+.dialog__buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 0 10px;
+}
+
+.dialog__buttons .btn {
+  min-width: 75px;
 }
 
 /* Banner */
