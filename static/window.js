@@ -7,6 +7,10 @@
   if (!win || !titlebar) return;
 
   const title = titlebar.querySelector('.titlebar__text').textContent;
+  const rectStyle = (r) => ({
+    left: `${r.left}px`, top: `${r.top}px`, width: `${r.width}px`, height: `${r.height}px`,
+  });
+
   const STORAGE_KEY = 'window';
 
   // <head> already applied the saved state, see base.html.
@@ -38,11 +42,16 @@
   function makeDraggable(el, handle, { x = 0, y = 0, apply, canDrag = () => true, onEnd = () => {} }) {
     const d = { x, y, clamp, set };
     let grab = null;
+    let outline = null;
 
     function set(nx, ny) {
       d.x = nx;
       d.y = ny;
-      apply(nx, ny);
+      if (outline) {
+        outline.style.translate = `${nx - grab.startX}px ${ny - grab.startY}px`;
+      } else {
+        apply(nx, ny);
+      }
     }
 
     function clamp() {
@@ -59,20 +68,38 @@
     handle.addEventListener('pointerdown', (e) => {
       if (e.button !== 0 || e.pointerType === 'touch') return;
       if (e.target.closest('button') || !canDrag()) return;
-      grab = { x: e.clientX - d.x, y: e.clientY - d.y };
+      grab = { x: e.clientX - d.x, y: e.clientY - d.y, startX: d.x, startY: d.y };
       try { handle.setPointerCapture(e.pointerId); } catch (err) {}
       root.classList.add('is-dragging');
     });
 
+    function showOutline() {
+      outline = document.createElement('div');
+      outline.className = 'drag-outline';
+      Object.assign(outline.style, rectStyle(el.getBoundingClientRect()));
+      document.body.append(outline);
+    }
+
     handle.addEventListener('pointermove', (e) => {
       if (!grab) return;
-      d.x = e.clientX - grab.x;
-      d.y = e.clientY - grab.y;
+      const nx = e.clientX - grab.x;
+      const ny = e.clientY - grab.y;
+      if (!outline) {
+        if (nx === d.x && ny === d.y) return;
+        showOutline();
+      }
+      d.x = nx;
+      d.y = ny;
       clamp();
     });
 
     function end() {
       if (!grab) return;
+      if (outline) {
+        outline.remove();
+        outline = null;
+        apply(d.x, d.y);
+      }
       grab = null;
       root.classList.remove('is-dragging');
       onEnd();
@@ -341,11 +368,26 @@
 
   // Minimize, close, restore
 
+  function zoom(from, to, done = () => {}) {
+    const el = titlebar.cloneNode(true);
+    el.classList.remove('is-draggable');
+    el.classList.add('zoom-rect');
+    el.querySelector('.titlebar__buttons').remove();
+    el.setAttribute('aria-hidden', 'true');
+    document.body.append(el);
+    el.animate([rectStyle(from), rectStyle(to)], { duration: 250, fill: 'forwards' }).onfinish = () => {
+      el.remove();
+      done();
+    };
+  }
+
   function minimize() {
+    const from = titlebar.getBoundingClientRect();
     root.classList.add('is-minimized');
     showDesktop(true);
     taskBtn.focus();
     save();
+    zoom(from, taskBtn.getBoundingClientRect());
   }
 
   function close() {
@@ -359,18 +401,35 @@
   }
 
   function restore() {
+    const from = taskBtn && !taskBtn.hidden ? taskBtn.getBoundingClientRect() : null;
     root.classList.remove('is-minimized', 'is-closed');
     hideDesktop();
+    activate(win);
     reclamp();
     save();
+    if (from) {
+      win.style.visibility = 'hidden';
+      zoom(from, titlebar.getBoundingClientRect(), () => { win.style.visibility = ''; });
+    }
   }
 
   function reopen() {
-    restore();
     window.scrollTo(0, 0);
+    restore();
   }
 
   bindActions(titlebar, { minimize, maximize: toggleMaximize, close });
+
+  // Active window
+
+  function activate(active) {
+    for (const el of document.querySelectorAll('.win')) {
+      el.classList.toggle('is-inactive', el !== active);
+    }
+  }
+
+  document.addEventListener('pointerdown', (e) => activate(e.target.closest('.win')));
+  document.addEventListener('focusin', (e) => activate(e.target.closest('.win')));
 
   // Restore saved state
 

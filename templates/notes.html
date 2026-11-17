@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Notes{% endblock %}
+
+{% block body %}
+<div class="box">
+  <div class="box__title">Notes</div>
+  <div class="box__body">
+    {% include "notes_list.html" %}
+  </div>
+</div>
+{% endblock %}

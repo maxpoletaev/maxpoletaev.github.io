@@ -1,7 +1,28 @@
 (function () {
   'use strict';
 
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Obfuscated contacts
+
+  for (const el of document.querySelectorAll('.obf[data-href]')) {
+    const link = document.createElement('a');
+    link.href = atob(el.dataset.href);
+    link.textContent = atob(el.dataset.text);
+    if (link.protocol !== 'mailto:') link.target = '_blank';
+    el.replaceChildren(link);
+  }
+
+  // Status bar
+
+  const status = document.querySelector('.statusbar__field--main');
+  if (status) {
+    const idle = status.textContent;
+    const show = (e) => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      status.textContent = a ? a.href : idle;
+    };
+    document.addEventListener('mouseover', show);
+    document.addEventListener('focusin', show);
+  }
 
   // Visitor counter
 
@@ -77,51 +98,4 @@
       showResults(checked.value);
     });
   }
-
-  // Snow, in winter (or with ?snow)
-
-  const month = new Date().getMonth();
-  const winter = month === 11 || month === 0 || month === 1;
-  if (reduceMotion || !(winter || /[?&]snow\b/.test(location.search))) return;
-
-  const FLAKES = 40;
-  const flakes = [];
-  const W = () => window.innerWidth;
-  const H = () => window.innerHeight;
-
-  function reset(f, top) {
-    f.x = Math.random() * W();
-    f.y = top ? -20 : Math.random() * H();
-    f.speed = 20 + Math.random() * 40;
-    f.sway = 10 + Math.random() * 25;
-    f.phase = Math.random() * Math.PI * 2;
-  }
-
-  for (let i = 0; i < FLAKES; i++) {
-    const el = document.createElement('div');
-    el.className = 'snowflake';
-    el.setAttribute('aria-hidden', 'true');
-    el.textContent = Math.random() < 0.5 ? '*' : '❄';
-    el.style.fontSize = 8 + Math.random() * 12 + 'px';
-    el.style.opacity = 0.6 + Math.random() * 0.4;
-    document.body.appendChild(el);
-    const f = { el };
-    reset(f, false);
-    flakes.push(f);
-  }
-
-  let last = null;
-  function tick(ts) {
-    const dt = last === null ? 0 : Math.min(ts - last, 100) / 1000;
-    last = ts;
-    for (const f of flakes) {
-      f.y += f.speed * dt;
-      f.phase += dt;
-      if (f.y > H() + 20) reset(f, true);
-      const x = f.x + Math.sin(f.phase) * f.sway;
-      f.el.style.transform = `translate(${x}px, ${f.y}px)`;
-    }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
 })();

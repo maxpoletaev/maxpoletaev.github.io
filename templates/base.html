@@ -50,7 +50,6 @@
       <a href="/#projects" class="btn">Projects</a>
       <a href="/notes/" class="btn">Notes</a>
       <a href="#contact" class="btn">Contact</a>
-      <a href="/static/masya.webp" class="btn">My cat</a>
       <span class="menu__date">Last updated: {{ site.time.strftime("%d.%m.%Y") }}</span>
     </nav>
 
@@ -64,14 +63,14 @@
         <div class="box" id="contact">
           <div class="box__title">Contact</div>
           <div class="box__body">
-            <div><b>E-mail:</b><br>max.poletaev@gmail.com</div>
-            <div><b>Telegram:</b><br>@maxpoletaev</div>
+            <div><b>E-mail:</b><br><span class="obf" data-href="bWFpbHRvOm1heC5wb2xldGFldkBnbWFpbC5jb20=" data-text="bWF4LnBvbGV0YWV2QGdtYWlsLmNvbQ=="></span></div>
+            <div><b>Telegram:</b><br><span class="obf" data-href="aHR0cHM6Ly90Lm1lL21heHBvbGV0YWV2" data-text="QG1heHBvbGV0YWV2"></span></div>
             <div><s><b>ICQ:</b><br>3232923</s></div>
           </div>
         </div>
 
         <div class="box">
-          <div class="box__title">My cat</div>
+          <div class="box__title">Cat of the day</div>
           <div class="box__body box__body--center">
             <a href="/static/masya.webp" class="photo"><img src="/static/masya.webp" alt="My cat" width="130" height="173"></a>
           </div>
@@ -126,17 +125,18 @@
   <template id="disk-error">
     <div class="dialog win" role="alertdialog" aria-labelledby="disk-error-title" aria-describedby="disk-error-text">
       <div class="titlebar">
+        <span class="titlebar__icon titlebar__icon--error" aria-hidden="true"></span>
         <span class="titlebar__text" id="disk-error-title">Half-Life</span>
         <span class="titlebar__buttons">
           <button type="button" class="tb-btn tb-btn--close" data-action="close" aria-label="Close"></button>
         </span>
       </div>
       <div class="dialog__body">
-        <span class="dialog__sign" aria-hidden="true">X</span>
+        <span class="dialog__sign" aria-hidden="true"></span>
         <p id="disk-error-text">Please insert the disk labeled "Half-Life CD" into drive D:, then try again.</p>
       </div>
       <div class="dialog__buttons">
-        <button type="button" class="btn" data-action="retry">Retry</button>
+        <button type="button" class="btn btn--default" data-action="retry">Retry</button>
         <button type="button" class="btn" data-action="close">Cancel</button>
       </div>
     </div>
