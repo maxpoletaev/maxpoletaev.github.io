@@ -102,7 +102,7 @@ a:hover {
 
 /* Window chrome */
 
-.window {
+.win {
   padding: 3px;
   background: var(--btn-face);
   box-shadow:
@@ -302,10 +302,16 @@ a:hover {
 
 /* Desktop: icon and taskbar */
 
-.desktop-icon {
+.desktop {
   position: fixed;
   top: 16px;
   left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.desktop-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -326,12 +332,12 @@ a:hover {
   image-rendering: pixelated;
 }
 
-.desktop-icon--second {
-  top: 104px;
-}
-
 .desktop-icon__img--hl {
   background: url('half-life.png') center / 32px 32px no-repeat;
+}
+
+.desktop-icon__img--winamp {
+  background: url('winamp.png') center / 32px 32px no-repeat;
 }
 
 .desktop-icon__label {
@@ -399,6 +405,19 @@ a:hover {
   font-size: 12px;
   line-height: 1;
   box-shadow: inset 1px 1px var(--btn-shadow), inset -1px -1px var(--btn-light);
+}
+
+/* Winamp */
+
+.webamp-anchor {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.is-busy,
+.is-busy * {
+  cursor: progress !important;
 }
 
 /* Error dialog */

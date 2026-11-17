@@ -2,7 +2,7 @@
   'use strict';
 
   const root = document.documentElement;
-  const win = document.querySelector('.page.window');
+  const win = document.querySelector('.page.win');
   const titlebar = win && win.querySelector('.titlebar');
   if (!win || !titlebar) return;
 
@@ -133,6 +133,7 @@
   let taskbar = null;
   let taskBtn = null;
   let icon = null;
+  let desktop = null;
   let hlIcon = null;
   let dialog = null;
   let clockTimer = null;
@@ -199,6 +200,73 @@
     retry.focus();
   }
 
+  // Winamp (Webamp), loaded from unpkg on first open
+  // Plays LukHash, "Digital Memories" (CC BY-NC-ND 3.0)
+
+  const WEBAMP_SRC = 'https://unpkg.com/webamp@2.3.1/built/webamp.bundle.min.js';
+  const WEBAMP_SRI = 'sha384-9waE2xOw4VkyDDXbmumm9jR3ovD2w9gGl0+ehyi66rJSOPx9lyNxs8+jSS2HruM6';
+  const LUKHASH = 'https://archive.org/download/ShMusic-DigitalMemories/';
+  const WEBAMP_TRACKS = [
+    ['04-DigitalMemories.mp3', 'Digital Memories', 189],
+    ['09-PixelMyHeart.mp3', 'Pixel My Heart', 215],
+    ['03-WinterError.mp3', 'Winter Error', 227],
+  ].map(([file, title, duration]) => ({
+    metaData: { artist: 'LukHash', title },
+    url: LUKHASH + file,
+    duration,
+  }));
+
+  let webamp = null;
+  let webampClosed = false;
+  let webampStarting = false;
+
+  function loadScript(src, integrity) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.integrity = integrity;
+      s.crossOrigin = 'anonymous';
+      s.onload = resolve;
+      s.onerror = () => {
+        s.remove();
+        reject(new Error(`failed to load ${src}`));
+      };
+      document.head.append(s);
+    });
+  }
+
+  async function openWinamp() {
+    if (webamp) {
+      if (webampClosed) {
+        webampClosed = false;
+        webamp.reopen();
+      }
+      return;
+    }
+    if (webampStarting) return;
+    webampStarting = true;
+    root.classList.add('is-busy');
+
+    const anchor = document.createElement('div');
+    anchor.className = 'webamp-anchor';
+    document.body.append(anchor);
+
+    try {
+      if (!window.Webamp) await loadScript(WEBAMP_SRC, WEBAMP_SRI);
+      if (!window.Webamp.browserIsSupported()) return;
+      const w = new window.Webamp({ initialTracks: WEBAMP_TRACKS, zIndex: 60 });
+      w.onClose(() => { webampClosed = true; });
+      await w.renderWhenReady(anchor);
+      webamp = w;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      anchor.remove();
+      root.classList.remove('is-busy');
+      webampStarting = false;
+    }
+  }
+
   function updateClock(el) {
     el.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
@@ -226,9 +294,13 @@
 
     icon = makeDesktopIcon('desktop-icon__img', "Max Poletaev's Corner", reopen);
     hlIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--hl', 'Half-Life', showDiskError);
-    hlIcon.classList.add('desktop-icon--second');
+    const winampIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--winamp', 'Winamp', openWinamp);
 
-    document.body.append(icon, hlIcon, taskbar);
+    desktop = document.createElement('div');
+    desktop.className = 'desktop';
+    desktop.append(icon, hlIcon, winampIcon);
+
+    document.body.append(desktop, taskbar);
   }
 
   function showDesktop(withTask) {
@@ -241,9 +313,8 @@
     clearInterval(clockTimer);
     if (dialog) dialog.remove();
     taskbar.remove();
-    icon.remove();
-    hlIcon.remove();
-    taskbar = taskBtn = icon = hlIcon = dialog = null;
+    desktop.remove();
+    taskbar = taskBtn = desktop = icon = hlIcon = dialog = null;
   }
 
   // Minimize, close, restore
