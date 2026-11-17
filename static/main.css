@@ -64,6 +64,7 @@ body {
 }
 
 html {
+  min-height: 100%;
   cursor: url('cursors/arrow.svg') 0 0, default;
 }
 
@@ -417,7 +418,12 @@ a:hover {
 
 .is-busy,
 .is-busy * {
-  cursor: progress !important;
+  cursor: url('cursors/progress.svg') 0 0, progress !important;
+}
+
+.is-waiting,
+.is-waiting * {
+  cursor: url('cursors/wait.svg') 6 10, wait !important;
 }
 
 /* Error dialog */

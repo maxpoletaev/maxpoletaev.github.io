@@ -163,6 +163,28 @@
     return el;
   }
 
+  function withCursor(kind, ms, fn) {
+    root.classList.add(`is-${kind}`);
+    setTimeout(() => {
+      root.classList.remove(`is-${kind}`);
+      fn();
+    }, ms);
+  }
+
+  let hlStarting = false;
+  function openHalfLife() {
+    if (dialog) {
+      dialog.querySelector('[data-action="retry"]').focus();
+      return;
+    }
+    if (hlStarting) return;
+    hlStarting = true;
+    withCursor('busy', 1500, () => {
+      hlStarting = false;
+      if (taskbar) showDiskError();
+    });
+  }
+
   function closeDialog() {
     if (!dialog) return;
     dialog.remove();
@@ -184,11 +206,11 @@
       close: closeDialog,
       retry: () => {
         el.hidden = true;
-        setTimeout(() => {
+        withCursor('waiting', 1200, () => {
           if (dialog !== el) return;
           el.hidden = false;
           retry.focus();
-        }, 600);
+        });
       },
     });
 
@@ -293,7 +315,7 @@
     taskbar.append(taskBtn, clock);
 
     icon = makeDesktopIcon('desktop-icon__img', "Max Poletaev's Corner", reopen);
-    hlIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--hl', 'Half-Life', showDiskError);
+    hlIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--hl', 'Half-Life', openHalfLife);
     const winampIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--winamp', 'Winamp', openWinamp);
 
     desktop = document.createElement('div');
