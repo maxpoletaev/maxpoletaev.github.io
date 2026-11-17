@@ -223,18 +223,18 @@
   }
 
   // Winamp (Webamp), loaded from unpkg on first open
-  // Plays LukHash, "Digital Memories" (CC BY-NC-ND 3.0)
+  // Drozerix chiptunes. The modules are public domain (The Mod Archive)
+  // mp3 renders streamed from ericade.radio's Internet Archive uploads.
 
   const WEBAMP_SRC = 'https://unpkg.com/webamp@2.3.1/built/webamp.bundle.min.js';
   const WEBAMP_SRI = 'sha384-9waE2xOw4VkyDDXbmumm9jR3ovD2w9gGl0+ehyi66rJSOPx9lyNxs8+jSS2HruM6';
-  const LUKHASH = 'https://archive.org/download/ShMusic-DigitalMemories/';
   const WEBAMP_TRACKS = [
-    ['04-DigitalMemories.mp3', 'Digital Memories', 189],
-    ['09-PixelMyHeart.mp3', 'Pixel My Heart', 215],
-    ['03-WinterError.mp3', 'Winter Error', 227],
-  ].map(([file, title, duration]) => ({
-    metaData: { artist: 'LukHash', title },
-    url: LUKHASH + file,
+    ['ericade-radio-13280-digital-rendezvous', 'Digital Rendezvous', 164],
+    ['ericade-radio-13118-chica-pop', 'Chica-pop!', 183],
+    ['ericade-radio-14829-cabin-fever', 'Cabin fever!', 120],
+  ].map(([item, title, duration]) => ({
+    metaData: { artist: 'Drozerix', title },
+    url: `https://archive.org/download/${item}/${encodeURIComponent(`Drozerix - ${title}.mp3`)}`,
     duration,
   }));
 
