@@ -336,6 +336,10 @@ a:hover {
   background: url('winamp.png') center / 32px 32px no-repeat;
 }
 
+.desktop-icon__img--nes {
+  background: url('nes.png') center / 32px 32px no-repeat;
+}
+
 .desktop-icon__label {
   padding: 1px 3px;
   line-height: 1.2;
@@ -479,6 +483,163 @@ a:hover {
 
 .dialog__buttons .btn:active {
   padding: 1px 9px 0 11px;
+}
+
+/* Dendy emulator window */
+
+.emu {
+  width: fit-content;
+  max-width: calc(100vw - 16px);
+}
+
+.titlebar__icon--nes {
+  background: url('nes.png') center / 16px 16px no-repeat;
+}
+
+.menubar {
+  display: flex;
+  padding: 2px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.menubar__item {
+  position: relative;
+}
+
+.menubar__label,
+.menubar__popup button,
+.menubar__popup a {
+  box-sizing: border-box;
+  text-decoration: none;
+  white-space: nowrap;
+  display: block;
+  width: 100%;
+  padding: 3px 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--btn-text);
+  text-align: left;
+}
+
+.menubar__label {
+  padding: 4px 8px;
+}
+
+.menubar__popup button,
+.menubar__popup a {
+  line-height: 1.4;
+}
+
+.menubar__label[aria-expanded="true"] {
+  box-shadow: inset 1px 1px var(--btn-shadow), inset -1px -1px var(--btn-light);
+}
+
+.menubar__label:hover,
+.menubar__popup button:hover,
+.menubar__popup button:focus,
+.menubar__popup a:hover,
+.menubar__popup a:focus {
+  color: #fff;
+  background: var(--title-from);
+  outline: none;
+}
+
+.menubar__popup {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1;
+  min-width: 140px;
+  padding: 2px;
+  background: var(--btn-face);
+  box-shadow:
+    inset -1px -1px var(--btn-dark), inset 1px 1px var(--btn-mid),
+    inset -2px -2px var(--btn-shadow), inset 2px 2px var(--btn-light);
+}
+
+.menubar__popup[hidden] {
+  display: none;
+}
+
+.menubar__popup hr {
+  margin: 2px 0;
+  border: 0;
+  border-top: 1px solid var(--btn-shadow);
+  border-bottom: 1px solid var(--btn-light);
+}
+
+.emu__screen {
+  position: relative;
+  line-height: 0;
+  background: #000;
+  box-shadow: inset 1px 1px var(--btn-shadow), inset -1px -1px var(--btn-light);
+  border: 2px solid transparent;
+}
+
+.emu__canvas {
+  display: block;
+  width: min(512px, calc(100vw - 28px));
+  aspect-ratio: 256 / 240;
+  image-rendering: pixelated;
+}
+
+.emu__msg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  color: #fff;
+}
+
+.emu__msg[hidden] {
+  display: none;
+}
+
+.emu__help {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.emu__help[hidden] {
+  display: none;
+}
+
+.emu__help table {
+  border-collapse: collapse;
+}
+
+.emu__help th,
+.emu__help td {
+  padding: 2px 14px;
+  text-align: left;
+}
+
+.emu__help th {
+  color: var(--accent);
+}
+
+.emu__help p {
+  margin: 0;
+}
+
+.emu__help .btn {
+  min-width: 75px;
 }
 
 /* Banner */

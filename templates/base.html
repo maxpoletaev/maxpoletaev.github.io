@@ -142,6 +142,53 @@
     </div>
   </template>
 
+  <template id="dendy-window">
+    <div class="dialog emu win" role="dialog" aria-label="Dendy">
+      <div class="titlebar">
+        <span class="titlebar__icon titlebar__icon--nes" aria-hidden="true"></span>
+        <span class="titlebar__text">Dendy</span>
+        <span class="titlebar__buttons">
+          <button type="button" class="tb-btn tb-btn--close" data-action="close" aria-label="Close"></button>
+        </span>
+      </div>
+      <div class="menubar">
+        <div class="menubar__item">
+          <button type="button" class="menubar__label" aria-haspopup="true" aria-expanded="false">File</button>
+          <div class="menubar__popup" hidden>
+            <button type="button" data-action="open">Open ROM...</button>
+            <button type="button" data-action="sample" data-sample="thwaite">Play Thwaite</button>
+            <hr>
+            <button type="button" data-action="close">Exit</button>
+          </div>
+        </div>
+        <div class="menubar__item">
+          <button type="button" class="menubar__label" aria-haspopup="true" aria-expanded="false">Help</button>
+          <div class="menubar__popup" hidden>
+            <button type="button" data-action="controls">Controls</button>
+            <a href="https://github.com/maxpoletaev/dendy" target="_blank" rel="noopener">Dendy on GitHub</a>
+          </div>
+        </div>
+      </div>
+      <div class="emu__screen">
+        <canvas class="emu__canvas" width="256" height="240"></canvas>
+        <div class="emu__msg" hidden></div>
+        <div class="emu__help" role="dialog" aria-label="Controls" hidden>
+          <table>
+            <tr><th>Keyboard</th><th>NES</th></tr>
+            <tr><td>W A S D</td><td>D-pad</td></tr>
+            <tr><td>K</td><td>A</td></tr>
+            <tr><td>J</td><td>B</td></tr>
+            <tr><td>Enter</td><td>Start</td></tr>
+            <tr><td>Shift</td><td>Select</td></tr>
+          </table>
+          <p>A gamepad works too.</p>
+          <button type="button" class="btn" data-action="help-ok">OK</button>
+        </div>
+      </div>
+      <input type="file" accept=".nes" hidden>
+    </div>
+  </template>
+
   <img src="https://mxp.goatcounter.com/count?p={{ site.current_url }}" alt="" width="1" height="1" class="pixel">
 </body>
 

@@ -162,6 +162,7 @@
   let icon = null;
   let desktop = null;
   let hlIcon = null;
+  let nesIcon = null;
   let dialog = null;
   let clockTimer = null;
 
@@ -273,8 +274,10 @@
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;
-      s.integrity = integrity;
-      s.crossOrigin = 'anonymous';
+      if (integrity) {
+        s.integrity = integrity;
+        s.crossOrigin = 'anonymous';
+      }
       s.onload = resolve;
       s.onerror = () => {
         s.remove();
@@ -316,6 +319,148 @@
     }
   }
 
+  // Dendy NES emulator (dendy.js), loaded on first open
+
+  let emu = null;
+  let emuStarting = false;
+
+  function emuMessage(el, text) {
+    const msg = el.querySelector('.emu__msg');
+    msg.textContent = text || '';
+    msg.hidden = !text;
+  }
+
+  async function emuLoadFile(el, file) {
+    if (!file) return;
+    if (!window.Dendy.load(await file.arrayBuffer())) {
+      emuMessage(el, 'Invalid or unsupported ROM file');
+      return;
+    }
+    emuMessage(el, '');
+    el.querySelector('.titlebar__text').textContent = `Dendy - ${file.name}`;
+  }
+
+  async function emuLoadSample(el, name) {
+    emuMessage(el, 'Loading...');
+    let title = '';
+    try {
+      title = await window.Dendy.loadSample(name);
+    } catch (err) {
+      console.error(err);
+    }
+    if (!title) {
+      emuMessage(el, 'Could not load the game');
+      return false;
+    }
+    emuMessage(el, '');
+    el.querySelector('.titlebar__text').textContent = `Dendy - ${title}`;
+    return true;
+  }
+
+  function closeEmu() {
+    if (!emu) return;
+    if (window.Dendy) window.Dendy.stop();
+    emu.remove();
+    emu = null;
+    if (nesIcon) nesIcon.focus();
+  }
+
+  async function openDendy() {
+    if (emu) {
+      emu.querySelector('.menubar__label').focus();
+      return;
+    }
+    if (emuStarting) return;
+    emuStarting = true;
+    root.classList.add('is-busy');
+
+    const tpl = document.getElementById('dendy-window');
+    const el = tpl.content.firstElementChild.cloneNode(true);
+    const input = el.querySelector('input[type="file"]');
+    const items = [...el.querySelectorAll('.menubar__item')];
+    const help = el.querySelector('.emu__help');
+
+    const setMenu = (item, open) => {
+      item.querySelector('.menubar__popup').hidden = !open;
+      item.querySelector('.menubar__label').setAttribute('aria-expanded', String(open));
+    };
+    const closeMenus = () => items.forEach((item) => setMenu(item, false));
+    const openItem = () => items.find((item) => !item.querySelector('.menubar__popup').hidden);
+    const setHelp = (open) => {
+      help.hidden = !open;
+      if (open) help.querySelector('button').focus();
+    };
+
+    for (const item of items) {
+      item.querySelector('.menubar__label').addEventListener('click', () => {
+        const open = item.querySelector('.menubar__popup').hidden;
+        closeMenus();
+        setMenu(item, open);
+      });
+    }
+    el.addEventListener('pointerdown', (e) => {
+      if (!e.target.closest('.menubar__item')) closeMenus();
+    });
+    el.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const item = openItem();
+      if (item) {
+        closeMenus();
+        item.querySelector('.menubar__label').focus();
+      } else if (!help.hidden) {
+        setHelp(false);
+      } else {
+        closeEmu();
+      }
+    });
+    input.addEventListener('change', () => {
+      emuLoadFile(el, input.files[0]);
+      input.value = '';
+    });
+    el.addEventListener('dragover', (e) => e.preventDefault());
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+      emuLoadFile(el, e.dataTransfer.files[0]);
+    });
+
+    makeDraggable(el, el.querySelector('.titlebar'), {
+      apply: (x, y) => { el.style.translate = `${x}px ${y}px`; },
+    });
+    bindActions(el, { close: closeEmu });
+    el.querySelector('.menubar').addEventListener('click', (e) => {
+      if (e.target.closest('.menubar__popup a')) closeMenus();
+      const btn = e.target.closest('.menubar__popup button[data-action]');
+      if (!btn) return;
+      closeMenus();
+      const action = btn.dataset.action;
+      if (action === 'open') input.click();
+      else if (action === 'sample') emuLoadSample(el, btn.dataset.sample);
+      else if (action === 'controls') setHelp(true);
+    });
+    help.addEventListener('click', (e) => {
+      if (e.target.closest('[data-action="help-ok"]')) setHelp(false);
+    });
+
+    try {
+      if (!window.Dendy) await loadScript('/static/dendy.js');
+      if (!taskbar) return;
+      document.body.append(el);
+      emu = el;
+      activate(el);
+      items[0].querySelector('.menubar__label').focus();
+      emuMessage(el, 'Loading...');
+      await window.Dendy.start(el.querySelector('canvas'));
+      if (emu !== el) return;
+      if (!(await emuLoadSample(el, 'thwaite'))) throw new Error('sample rejected');
+    } catch (err) {
+      console.error(err);
+      if (emu === el) emuMessage(el, 'Could not start the emulator');
+    } finally {
+      root.classList.remove('is-busy');
+      emuStarting = false;
+    }
+  }
+
   function updateClock(el) {
     el.textContent = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   }
@@ -345,9 +490,11 @@
     hlIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--hl', 'Half-Life', openHalfLife);
     const winampIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--winamp', 'Winamp', openWinamp);
 
+    nesIcon = makeDesktopIcon('desktop-icon__img desktop-icon__img--nes', 'Dendy (NES)', openDendy);
+
     desktop = document.createElement('div');
     desktop.className = 'desktop';
-    desktop.append(icon, hlIcon, winampIcon);
+    desktop.append(icon, hlIcon, winampIcon, nesIcon);
 
     document.body.append(desktop, taskbar);
   }
@@ -361,9 +508,10 @@
     if (!taskbar) return;
     clearInterval(clockTimer);
     if (dialog) dialog.remove();
+    closeEmu();
     taskbar.remove();
     desktop.remove();
-    taskbar = taskBtn = desktop = icon = hlIcon = dialog = null;
+    taskbar = taskBtn = desktop = icon = hlIcon = nesIcon = dialog = null;
   }
 
   // Minimize, close, restore

@@ -226,7 +226,14 @@
     }
   }
 
+  const rootEl = document.documentElement;
+
   function tick(ts) {
+    if (rootEl.classList.contains('is-minimized') || rootEl.classList.contains('is-closed')) {
+      lastTs = null;
+      requestAnimationFrame(tick);
+      return;
+    }
     if (lastTs === null) lastTs = ts;
     const dt = Math.min(ts - lastTs, 100);
     lastTs = ts;
